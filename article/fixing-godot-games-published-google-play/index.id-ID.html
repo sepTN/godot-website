@@ -1,0 +1,459 @@
+<!doctype html><html lang=""><head><meta charset="utf-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1"/>
+			<meta name="author" content="Mesin Godot"/>
+			<meta name="description" content=""/>
+			<meta name="theme-color" content="#3d8fcc"/>
+			<meta property="og:site_name" content="Godot Engine"/>
+			<meta property="og:url" content="https://godotengine.org/article/fixing-godot-games-published-google-play/"/>
+			<meta name="twitter:site" content="@godotengine"/>
+			<meta property="og:title" content="Fixing Godot games published in Google Play"/>
+			<meta property="og:description" content=""/>
+			<meta property="og:image" content="https://godotengine.org/storage/app/uploads/public/5b0/801/a45/5b0801a4507a7324391341.png"/>
+			<meta property="og:type" content="article"/>
+			<meta name="twitter:card" content="summary_large_image"/>
+			<title></title>
+			<link rel="alternate" type="application/rss+xml" title="Berita Godot" href="/rss.xml"/>
+			<link rel="icon" href="/assets/favicon.png" sizes="any"/>
+			<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml"/>
+			<link rel="stylesheet" href="/assets/css/main.css?105"/>
+			<link rel="stylesheet" href="/assets/css/tobii.min.css"/>
+			<link rel="preload" as="font" href="/assets/fonts/Montserrat-Bold.woff2" crossorigin=""/>
+			<link rel="preload" as="font" href="/assets/fonts/Montserrat-ExtraBold.woff2" crossorigin=""/>
+			<link rel="me" href="https://mastodon.gamedev.place/@godotengine"/>
+		</head>
+		<body><input type="checkbox" id="nav_toggle_cb"/><header><div class="container flex align-center"><div id="nav_head"><a href="/" id="logo-link"><img class="nav-logo" src="/assets/logo.svg" width="136" height="48" alt="Mesin Godot"/><img class="nav-logo dark-logo" src="/assets/logo_dark.svg" width="136" height="48" alt="Mesin Godot"/></a><label for="nav_toggle_cb" id="nav_toggle_btn"><img src="/assets/hamburger.svg" width="24" height="24" alt=""/></label></div>
+					<nav id="nav"><ul class="left"><li><a href="/features">Fitur</a></li>
+						<div class="only-on-mobile" style="width: 100%">
+							<li><a href="/showcase">Pajangan</a></li>
+						</div>
+						<li><a href="/blog">Blog</a></li>
+						<li><a href="/community">Komunitas</a></li>
+						<li><a href="/contact">Tentang</a></li>
+						<li><a href="https://godotengine.org/asset-library/asset">Aset</a></li>
+					</ul><ul class="right"><li><a href="/download/windows" class="set-os-download-url">Unduh</a></li>
+					<li><a href="https://docs.godotengine.org">Belajar</a></li>
+					<li><a href="https://docs.godotengine.org/en/stable/community/contributing/index.html">Berkontribusi</a></li>
+					<li class="fund"><a href="/donate">❤︎ Donasi</a></li>
+				</ul>
+			</nav>
+		</div>
+	</header>
+	<main><style>
+	body {
+		background-color: var(--background-color);
+	}
+
+	h1 {
+		margin-bottom: 8px;
+		margin-top: 32px;
+	}
+
+	:not(pre)>code {
+		background: var(--code-background-color);
+		padding: 1px 4px;
+		font-size: 0.95em;
+		border-radius: 3px;
+	}
+
+	pre {
+		background: var(--codeblock-background-color);
+		color: var(--codeblock-color);
+	}
+
+	pre code {
+		display: block;
+		overflow-x: auto;
+		padding: .5em;
+	}
+
+	.date-big {
+		line-height: 2;
+		margin-left: 32px;
+	}
+
+	article {
+		background-color: var(--base-color);
+		box-shadow: 0px 3px 2px 0px rgba(0, 0, 0, 0.15);
+	}
+
+	figure {
+		margin: 0;
+	}
+
+	figure img {
+		margin: 0;
+	}
+
+	article img,
+	article video {
+		max-width: 100%;
+		height: auto;
+		display: block;
+		margin: auto;
+		margin-top: 16px;
+		margin-bottom: 16px;
+	}
+
+	article h1 {
+		margin-top: 64px;
+	}
+
+	article h2,
+	article h3,
+	article h4 {
+		margin-top: 42px;
+	}
+
+	.article-info {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+	}
+
+	.article-metadata {
+		display: flex;
+		gap: 24px;
+		align-items: center;
+		font-family: var(--header-font-family);
+		margin-bottom: 12px;
+	}
+
+	@media (max-width: 900px) {
+		.article-metadata {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 16px;
+		}
+	}
+
+	.article-author {
+		color: var(--base-color-text-subtitle-date);
+		font-weight: 700;
+		font-size: 18px;
+		flex-grow: 1;
+		display: flex;
+		gap: 12px;
+		align-items: center;
+	}
+
+	.article-author .avatar {
+		border-radius: 100%;
+		margin: 0;
+	}
+
+	.article-author .by {
+		color: var(--base-color-text-subtitle);
+	}
+	
+	.article-metadata .date {
+		color: var(--base-color-text-subtitle-date);
+	}
+
+	.tag.active {
+		filter: saturate(0.75);
+	}
+
+	@media screen and (min-width: 900px) {
+		article .content {
+			width: 70%;
+			margin: auto;
+		}
+	}
+
+	@media (max-width: 900px) {
+		body {
+			background-color: var(--base-color);
+		}
+
+		article {
+			background-color: transparent;
+			box-shadow: none;
+		}
+
+		article img:first-child,
+		article video:first-child {
+			max-width: 100%;
+		}
+	}
+</style><link rel="stylesheet" href="/assets/css/highlight.obsidian.min.css"/>
+		<div class="container">
+			<article class="padded">
+				<div class="content article-container">
+					<figure class="article-cover"><img src="/storage/app/uploads/public/5b0/801/a45/5b0801a4507a7324391341.png" title="" alt="" class="rounded-lg" style="width: 100%; height: auto"/></figure>
+					<div class="article-info">
+						<h1>  </h1>
+						<div class="article-metadata">
+							<div class="article-author"></div> <span class="date"></span></div>
+						<div class="tags"><a href="/blog/news"><div class="tag active"></div>
+						</a>
+					</div>
+				</div>
+				<div class="card card-warning">
+					<p>  </p>
+				</div>
+				<div class="article-body">
+					<p></p>
+					<p></p>
+					<p></p>
+					<h2 id="how-to-fix-it"></h2>
+					<p></p><ul><li></li>
+					<li></li>
+					<li></li>
+				</ul>
+				<p></p>
+				<h3 id="a-using-a-custom-no-permissions-template"></h3>
+				<p></p><ul><li></li>
+				<li></li>
+			</ul>
+			<p></p>
+			<p><img src="/storage/app/uploads/public/5b0/812/cb2/5b0812cb2680c963456756.png" alt=""/></p>
+			<p></p>
+			<h3 id="b-building-from-source-and-editing-the-manifest"></h3>
+			<h5 id="1-download-godot-source-code-from-github"></h5>
+			<p></p>
+			<p><img src="/storage/app/media/branch.png" alt=""/></p>
+			<h5 id="2-modify-the-manifest-template"></h5>
+			<p></p>
+			<p><code class="language-plaintext highlighter-rouge">godot/platform/android/AndroidManifest.xml.template</code></p>
+			<p></p>
+			<div class="language-plaintext highlighter-rouge">
+				<div class="highlight"><pre class="highlight"><code>&lt;uses-permission android:name="godot.ACCESS_CHECKIN_PROPERTIES"/&gt;
+&lt;uses-permission android:name="godot.ACCESS_COARSE_LOCATION"/&gt;
+&lt;uses-permission android:name="godot.ACCESS_FINE_LOCATION"/&gt;
+&lt;uses-permission android:name="godot.ACCESS_LOCATION_EXTRA_COMMANDS"/&gt;
+&lt;uses-permission android:name="godot.ACCESS_MOCK_LOCATION"/&gt;
+&lt;uses-permission android:name="godot.ACCESS_NETWORK_STATE"/&gt;
+&lt;uses-permission android:name="godot.ACCESS_SURFACE_FLINGER"/&gt;
+&lt;uses-permission android:name="godot.ACCESS_WIFI_STATE"/&gt;
+&lt;uses-permission android:name="godot.ACCOUNT_MANAGER"/&gt;
+&lt;uses-permission android:name="godot.ADD_VOICEMAIL"/&gt;
+&lt;uses-permission android:name="godot.AUTHENTICATE_ACCOUNTS"/&gt;
+&lt;uses-permission android:name="godot.BATTERY_STATS"/&gt;
+&lt;uses-permission android:name="godot.BIND_ACCESSIBILITY_SERVICE"/&gt;
+&lt;uses-permission android:name="godot.BIND_APPWIDGET"/&gt;
+&lt;uses-permission android:name="godot.BIND_DEVICE_ADMIN"/&gt;
+&lt;uses-permission android:name="godot.BIND_INPUT_METHOD"/&gt;
+&lt;uses-permission android:name="godot.BIND_NFC_SERVICE"/&gt;
+&lt;uses-permission android:name="godot.BIND_NOTIFICATION_LISTENER_SERVICE"/&gt;
+&lt;uses-permission android:name="godot.BIND_PRINT_SERVICE"/&gt;
+&lt;uses-permission android:name="godot.BIND_REMOTEVIEWS"/&gt;
+&lt;uses-permission android:name="godot.BIND_TEXT_SERVICE"/&gt;
+&lt;uses-permission android:name="godot.BIND_VPN_SERVICE"/&gt;
+&lt;uses-permission android:name="godot.BIND_WALLPAPER"/&gt;
+&lt;uses-permission android:name="godot.BLUETOOTH"/&gt;
+&lt;uses-permission android:name="godot.BLUETOOTH_ADMIN"/&gt;
+&lt;uses-permission android:name="godot.BLUETOOTH_PRIVILEGED"/&gt;
+&lt;uses-permission android:name="godot.BRICK"/&gt;
+&lt;uses-permission android:name="godot.BROADCAST_PACKAGE_REMOVED"/&gt;
+&lt;uses-permission android:name="godot.BROADCAST_SMS"/&gt;
+&lt;uses-permission android:name="godot.BROADCAST_STICKY"/&gt;
+&lt;uses-permission android:name="godot.BROADCAST_WAP_PUSH"/&gt;
+&lt;uses-permission android:name="godot.CALL_PHONE"/&gt;
+&lt;uses-permission android:name="godot.CALL_PRIVILEGED"/&gt;
+&lt;uses-permission android:name="godot.CAMERA"/&gt;
+&lt;uses-permission android:name="godot.CAPTURE_AUDIO_OUTPUT"/&gt;
+&lt;uses-permission android:name="godot.CAPTURE_SECURE_VIDEO_OUTPUT"/&gt;
+&lt;uses-permission android:name="godot.CAPTURE_VIDEO_OUTPUT"/&gt;
+&lt;uses-permission android:name="godot.CHANGE_COMPONENT_ENABLED_STATE"/&gt;
+&lt;uses-permission android:name="godot.CHANGE_CONFIGURATION"/&gt;
+&lt;uses-permission android:name="godot.CHANGE_NETWORK_STATE"/&gt;
+&lt;uses-permission android:name="godot.CHANGE_WIFI_MULTICAST_STATE"/&gt;
+&lt;uses-permission android:name="godot.CHANGE_WIFI_STATE"/&gt;
+&lt;uses-permission android:name="godot.CLEAR_APP_CACHE"/&gt;
+&lt;uses-permission android:name="godot.CLEAR_APP_USER_DATA"/&gt;
+&lt;uses-permission android:name="godot.CONTROL_LOCATION_UPDATES"/&gt;
+&lt;uses-permission android:name="godot.DELETE_CACHE_FILES"/&gt;
+&lt;uses-permission android:name="godot.DELETE_PACKAGES"/&gt;
+&lt;uses-permission android:name="godot.DEVICE_POWER"/&gt;
+&lt;uses-permission android:name="godot.DIAGNOSTIC"/&gt;
+&lt;uses-permission android:name="godot.DISABLE_KEYGUARD"/&gt;
+&lt;uses-permission android:name="godot.DUMP"/&gt;
+&lt;uses-permission android:name="godot.EXPAND_STATUS_BAR"/&gt;
+&lt;uses-permission android:name="godot.FACTORY_TEST"/&gt;
+&lt;uses-permission android:name="godot.FLASHLIGHT"/&gt;
+&lt;uses-permission android:name="godot.FORCE_BACK"/&gt;
+&lt;uses-permission android:name="godot.GET_ACCOUNTS"/&gt;
+&lt;uses-permission android:name="godot.GET_PACKAGE_SIZE"/&gt;
+&lt;uses-permission android:name="godot.GET_TASKS"/&gt;
+&lt;uses-permission android:name="godot.GET_TOP_ACTIVITY_INFO"/&gt;
+&lt;uses-permission android:name="godot.GLOBAL_SEARCH"/&gt;
+&lt;uses-permission android:name="godot.HARDWARE_TEST"/&gt;
+&lt;uses-permission android:name="godot.INJECT_EVENTS"/&gt;
+&lt;uses-permission android:name="godot.INSTALL_LOCATION_PROVIDER"/&gt;
+&lt;uses-permission android:name="godot.INSTALL_PACKAGES"/&gt;
+&lt;uses-permission android:name="godot.INSTALL_SHORTCUT"/&gt;
+&lt;uses-permission android:name="godot.INTERNAL_SYSTEM_WINDOW"/&gt;
+&lt;uses-permission android:name="godot.INTERNET"/&gt;
+&lt;uses-permission android:name="godot.KILL_BACKGROUND_PROCESSES"/&gt;
+&lt;uses-permission android:name="godot.LOCATION_HARDWARE"/&gt;
+&lt;uses-permission android:name="godot.MANAGE_ACCOUNTS"/&gt;
+&lt;uses-permission android:name="godot.MANAGE_APP_TOKENS"/&gt;
+&lt;uses-permission android:name="godot.MANAGE_DOCUMENTS"/&gt;
+&lt;uses-permission android:name="godot.MASTER_CLEAR"/&gt;
+&lt;uses-permission android:name="godot.MEDIA_CONTENT_CONTROL"/&gt;
+&lt;uses-permission android:name="godot.MODIFY_AUDIO_SETTINGS"/&gt;
+&lt;uses-permission android:name="godot.MODIFY_PHONE_STATE"/&gt;
+&lt;uses-permission android:name="godot.MOUNT_FORMAT_FILESYSTEMS"/&gt;
+&lt;uses-permission android:name="godot.MOUNT_UNMOUNT_FILESYSTEMS"/&gt;
+&lt;uses-permission android:name="godot.NFC"/&gt;
+&lt;uses-permission android:name="godot.PERSISTENT_ACTIVITY"/&gt;
+&lt;uses-permission android:name="godot.PROCESS_OUTGOING_CALLS"/&gt;
+&lt;uses-permission android:name="godot.READ_CALENDAR"/&gt;
+&lt;uses-permission android:name="godot.READ_CALL_LOG"/&gt;
+&lt;uses-permission android:name="godot.READ_CONTACTS"/&gt;
+&lt;uses-permission android:name="godot.READ_EXTERNAL_STORAGE"/&gt;
+&lt;uses-permission android:name="godot.READ_FRAME_BUFFER"/&gt;
+&lt;uses-permission android:name="godot.READ_HISTORY_BOOKMARKS"/&gt;
+&lt;uses-permission android:name="godot.READ_INPUT_STATE"/&gt;
+&lt;uses-permission android:name="godot.READ_LOGS"/&gt;
+&lt;uses-permission android:name="godot.READ_PHONE_STATE"/&gt;
+&lt;uses-permission android:name="godot.READ_PROFILE"/&gt;
+&lt;uses-permission android:name="godot.READ_SMS"/&gt;
+&lt;uses-permission android:name="godot.READ_SOCIAL_STREAM"/&gt;
+&lt;uses-permission android:name="godot.READ_SYNC_SETTINGS"/&gt;
+&lt;uses-permission android:name="godot.READ_SYNC_STATS"/&gt;
+&lt;uses-permission android:name="godot.READ_USER_DICTIONARY"/&gt;
+&lt;uses-permission android:name="godot.REBOOT"/&gt;
+&lt;uses-permission android:name="godot.RECEIVE_BOOT_COMPLETED"/&gt;
+&lt;uses-permission android:name="godot.RECEIVE_MMS"/&gt;
+&lt;uses-permission android:name="godot.RECEIVE_SMS"/&gt;
+&lt;uses-permission android:name="godot.RECEIVE_WAP_PUSH"/&gt;
+&lt;uses-permission android:name="godot.RECORD_AUDIO"/&gt;
+&lt;uses-permission android:name="godot.REORDER_TASKS"/&gt;
+&lt;uses-permission android:name="godot.RESTART_PACKAGES"/&gt;
+&lt;uses-permission android:name="godot.SEND_RESPOND_VIA_MESSAGE"/&gt;
+&lt;uses-permission android:name="godot.SEND_SMS"/&gt;
+&lt;uses-permission android:name="godot.SET_ACTIVITY_WATCHER"/&gt;
+&lt;uses-permission android:name="godot.SET_ALARM"/&gt;
+&lt;uses-permission android:name="godot.SET_ALWAYS_FINISH"/&gt;
+&lt;uses-permission android:name="godot.SET_ANIMATION_SCALE"/&gt;
+&lt;uses-permission android:name="godot.SET_DEBUG_APP"/&gt;
+&lt;uses-permission android:name="godot.SET_ORIENTATION"/&gt;
+&lt;uses-permission android:name="godot.SET_POINTER_SPEED"/&gt;
+&lt;uses-permission android:name="godot.SET_PREFERRED_APPLICATIONS"/&gt;
+&lt;uses-permission android:name="godot.SET_PROCESS_LIMIT"/&gt;
+&lt;uses-permission android:name="godot.SET_TIME"/&gt;
+&lt;uses-permission android:name="godot.SET_TIME_ZONE"/&gt;
+&lt;uses-permission android:name="godot.SET_WALLPAPER"/&gt;
+&lt;uses-permission android:name="godot.SET_WALLPAPER_HINTS"/&gt;
+&lt;uses-permission android:name="godot.SIGNAL_PERSISTENT_PROCESSES"/&gt;
+&lt;uses-permission android:name="godot.STATUS_BAR"/&gt;
+&lt;uses-permission android:name="godot.SUBSCRIBED_FEEDS_READ"/&gt;
+&lt;uses-permission android:name="godot.SUBSCRIBED_FEEDS_WRITE"/&gt;
+&lt;uses-permission android:name="godot.SYSTEM_ALERT_WINDOW"/&gt;
+&lt;uses-permission android:name="godot.TRANSMIT_IR"/&gt;
+&lt;uses-permission android:name="godot.UNINSTALL_SHORTCUT"/&gt;
+&lt;uses-permission android:name="godot.UPDATE_DEVICE_STATS"/&gt;
+&lt;uses-permission android:name="godot.USE_CREDENTIALS"/&gt;
+&lt;uses-permission android:name="godot.USE_SIP"/&gt;
+&lt;uses-permission android:name="godot.VIBRATE"/&gt;
+&lt;uses-permission android:name="godot.WAKE_LOCK"/&gt;
+&lt;uses-permission android:name="godot.WRITE_APN_SETTINGS"/&gt;
+&lt;uses-permission android:name="godot.WRITE_CALENDAR"/&gt;
+&lt;uses-permission android:name="godot.WRITE_CALL_LOG"/&gt;
+&lt;uses-permission android:name="godot.WRITE_CONTACTS"/&gt;
+&lt;uses-permission android:name="godot.WRITE_EXTERNAL_STORAGE"/&gt;
+&lt;uses-permission android:name="godot.WRITE_GSERVICES"/&gt;
+&lt;uses-permission android:name="godot.WRITE_HISTORY_BOOKMARKS"/&gt;
+&lt;uses-permission android:name="godot.WRITE_PROFILE"/&gt;
+&lt;uses-permission android:name="godot.WRITE_SECURE_SETTINGS"/&gt;
+&lt;uses-permission android:name="godot.WRITE_SETTINGS"/&gt;
+&lt;uses-permission android:name="godot.WRITE_SMS"/&gt;
+&lt;uses-permission android:name="godot.WRITE_SOCIAL_STREAM"/&gt;
+&lt;uses-permission android:name="godot.WRITE_SYNC_SETTINGS"/&gt;
+&lt;uses-permission android:name="godot.WRITE_USER_DICTIONARY"/&gt;
+&lt;uses-permission android:name="godot.custom.0"/&gt;
+&lt;uses-permission android:name="godot.custom.1"/&gt;
+&lt;uses-permission android:name="godot.custom.2"/&gt;
+&lt;uses-permission android:name="godot.custom.3"/&gt;
+&lt;uses-permission android:name="godot.custom.4"/&gt;
+&lt;uses-permission android:name="godot.custom.5"/&gt;
+&lt;uses-permission android:name="godot.custom.6"/&gt;
+&lt;uses-permission android:name="godot.custom.7"/&gt;
+&lt;uses-permission android:name="godot.custom.8"/&gt;
+&lt;uses-permission android:name="godot.custom.9"/&gt;
+&lt;uses-permission android:name="godot.custom.10"/&gt;
+&lt;uses-permission android:name="godot.custom.11"/&gt;
+&lt;uses-permission android:name="godot.custom.12"/&gt;
+&lt;uses-permission android:name="godot.custom.13"/&gt;
+&lt;uses-permission android:name="godot.custom.14"/&gt;
+&lt;uses-permission android:name="godot.custom.15"/&gt;
+&lt;uses-permission android:name="godot.custom.16"/&gt;
+&lt;uses-permission android:name="godot.custom.17"/&gt;
+&lt;uses-permission android:name="godot.custom.18"/&gt;
+&lt;uses-permission android:name="godot.custom.19"/&gt;
+</code></pre></div>
+			</div>
+			<p></p>
+			<h5 id="3-compile-the-android-templates"></h5>
+			<p></p>
+			<h5 id="4-set-your-new-apks-as-custom-export-templates"></h5>
+			<p></p>
+			<h5 id="5-if-needed-add-a-privacy-policy"></h5>
+			<p></p>
+			<p></p>
+			<h2 id="future"></h2>
+			<p></p>
+			<p></p>
+			<p></p>
+		</div>
+	</div></article></div><link rel="stylesheet" href="/assets/css/anchor-link.css"/><script src="/assets/js/anchor-link.js"></script><script>
+	document.addEventListener('DOMContentLoaded', () => {
+		// Add icons to easily copy section links.
+		window.applyAnchorLinks('.article-body');
+
+		// Add lightbox elements in blog articles for Tobii.
+		document.querySelectorAll('.article-cover img, .article-body img').forEach((articleImg) => {
+			const lightbox = document.createElement('a');
+			lightbox.href = articleImg.src;
+			lightbox.classList.add('lightbox');
+			lightbox.dataset.group = 'article';
+			articleImg.parentNode.appendChild(lightbox);
+			lightbox.appendChild(articleImg);
+		});
+	});
+</script></main><footer><div class="container flex footer-container"><div id="copyright">
+	<p> © 2007-2023 Juan Linietsky, Ariel Manzur dan para <a href="https://github.com/godotengine/godot/blob/master/AUTHORS.md" target="_blank" rel="noopener">kontributor</a><br/>
+				Godot adalah anggota dari <a href="https://sfconservancy.org/" target_="_blank" rel="noopener">Software Freedom
+					Conservancy</a>.<br/>
+				Dikelola oleh <a href="https://tuxfamily.org" target="_blank" rel="noopener">TuxFamily.org</a>.<br/><a href="https://github.com/godotengine/godot-website" target="_blank" rel="noopener">Kode sumber situs web di
+					GitHub</a>. </p></div><div id="sitemap"><ul class="sitemap-group"><li><strong>Dapatkan Godot</strong></li>
+	<li><a href="/download/windows" class="set-os-download-url">Unduh</a></li>
+	<li><a href="https://editor.godotengine.org/releases/latest/">Editor Web</a></li>
+	<li>&nbsp;</li>
+	<li><strong>Hubungan Masyarakat</strong></li>
+	<li><a href="/blog">Blog</a></li>
+	<li><a href="/community">Komunitas dan Acara</a></li>
+	<li><a href="/press">Kit Pers</a></li></ul><ul class="sitemap-group"><li><strong>Tentang Godot</strong></li><li><a href="/features">Fitur</a></li><li><a href="/showcase">Pajangan</a></li><li><a href="/education">Pendidikan</a></li><li><a href="/license">Lisensi</a></li><li><a href="/code-of-conduct">Kode Etik</a></li><li><a href="/privacy-policy">Kebijakan Privasi</a></li><li><a href="/donate">Donasi</a></li></ul><ul class="sitemap-group"><li><strong>Tim Proyek</strong></li><li><a href="/governance">Tata Kelola</a></li><li><a href="/teams">Tim</a></li><li>&nbsp;</li><li><strong>Sumber Daya Tambahan</strong></li><li><a href="/asset-library/asset">Perpustakaan Aset</a></li><li><a href="https://docs.godotengine.org">Dokumentasi</a></li><li><a href="https://github.com/godotengine">Repositori Kode</a></li></ul></div><div id="social" class="dark-desaturate"><h4 class="text-right"><a href="/contact">Hubungi kami</a></h4><div class="flex justify-space-between"><a href="https://github.com/godotengine" target="_blank" rel="noopener"><img src="/assets/footer/github_logo.svg" width="32" height="32" alt="GitHub"/></a><a href="https://twitter.com/godotengine" target="_blank" rel="noopener"><img src="/assets/footer/twitter_logo.svg" width="32" height="32" alt="Twitter"/></a><a href="https://www.facebook.com/groups/godotengine/" target="_blank" rel="noopener"><img src="/assets/footer/facebook_logo.svg" width="32" height="32" alt="Facebook"/></a><a href="https://www.reddit.com/r/godot" target="_blank" rel="noopener"><!-- Zero-width space in the `alt` text to prevent content blockers from blocking the icon --><img src="/assets/footer/reddit_logo.svg" width="32" height="32" alt="Reddit"/></a><a href="/rss.xml" target="_blank" rel="noopener"><!-- Icon is called `feed` instead of `rss` to prevent content blockers from blocking the icon --><img src="/assets/footer/feed_logo.svg" width="32" height="32" alt="Umpan RSS"/></a></div></div></div></footer><script defer src="/assets/js/tobii.min.js"></script><script defer src="/assets/js/highlight.min.js?1"></script><script defer src="/assets/js/highlight.gdscript.min.js?1"></script><script>
+	document.addEventListener('DOMContentLoaded', () => {
+		// This needs to be done on page load but also after page changes,
+		// in case a code block appears in an article.
+		document.querySelectorAll('pre code').forEach((block) => {
+			hljs.highlightBlock(block);
+		});
+
+		// Initialize lightbox.
+		new Tobii({
+			zoom: false,
+		});
+
+		// Update any download link to point to identified user's OS.
+		const links = document.querySelectorAll('.set-os-download-url');
+		for (let i = 0; i < links.length; i++) {
+			const link = links[i];
+			let link_slug = 'download';
+			if ('version' in link.dataset && link.dataset['version'] === '3') {
+				link_slug = 'download/3.x';
+			}
+
+			let link_platform = 'windows';
+			if (navigator.platform.indexOf('Mac') !== -1) {
+				link_platform = 'macos';
+			} else if (navigator.platform.indexOf('Linux') !== -1) {
+				link_platform = 'linux';
+			}
+
+			link.href = `/${link_slug}/${link_platform}`;
+		}
+	});
+</script></body></html>

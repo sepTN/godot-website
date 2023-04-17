@@ -1,0 +1,464 @@
+<!doctype html><html lang=""><head><meta charset="utf-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1"/>
+			<meta name="author" content="Mesin Godot"/>
+			<meta name="description" content=""/>
+			<meta name="theme-color" content="#3d8fcc"/>
+			<meta property="og:site_name" content="Godot Engine"/>
+			<meta property="og:url" content="https://godotengine.org/article/godot-3-0-released/"/>
+			<meta name="twitter:site" content="@godotengine"/>
+			<meta property="og:title" content="Godot 3.0 is out and ready for the big leagues"/>
+			<meta property="og:description" content=""/>
+			<meta property="og:image" content="https://godotengine.org/storage/app/uploads/public/5a6/f92/d3f/5a6f92d3f0d1d382442473.jpg"/>
+			<meta property="og:type" content="article"/>
+			<meta name="twitter:card" content="summary_large_image"/>
+			<title></title>
+			<link rel="alternate" type="application/rss+xml" title="Berita Godot" href="/rss.xml"/>
+			<link rel="icon" href="/assets/favicon.png" sizes="any"/>
+			<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml"/>
+			<link rel="stylesheet" href="/assets/css/main.css?105"/>
+			<link rel="stylesheet" href="/assets/css/tobii.min.css"/>
+			<link rel="preload" as="font" href="/assets/fonts/Montserrat-Bold.woff2" crossorigin=""/>
+			<link rel="preload" as="font" href="/assets/fonts/Montserrat-ExtraBold.woff2" crossorigin=""/>
+			<link rel="me" href="https://mastodon.gamedev.place/@godotengine"/>
+		</head>
+		<body><input type="checkbox" id="nav_toggle_cb"/><header><div class="container flex align-center"><div id="nav_head"><a href="/" id="logo-link"><img class="nav-logo" src="/assets/logo.svg" width="136" height="48" alt="Mesin Godot"/><img class="nav-logo dark-logo" src="/assets/logo_dark.svg" width="136" height="48" alt="Mesin Godot"/></a><label for="nav_toggle_cb" id="nav_toggle_btn"><img src="/assets/hamburger.svg" width="24" height="24" alt=""/></label></div>
+					<nav id="nav"><ul class="left"><li><a href="/features">Fitur</a></li>
+						<div class="only-on-mobile" style="width: 100%">
+							<li><a href="/showcase">Pajangan</a></li>
+						</div>
+						<li><a href="/blog">Blog</a></li>
+						<li><a href="/community">Komunitas</a></li>
+						<li><a href="/contact">Tentang</a></li>
+						<li><a href="https://godotengine.org/asset-library/asset">Aset</a></li>
+					</ul><ul class="right"><li><a href="/download/windows" class="set-os-download-url">Unduh</a></li>
+					<li><a href="https://docs.godotengine.org">Belajar</a></li>
+					<li><a href="https://docs.godotengine.org/en/stable/community/contributing/index.html">Berkontribusi</a></li>
+					<li class="fund"><a href="/donate">❤︎ Donasi</a></li>
+				</ul>
+			</nav>
+		</div>
+	</header>
+	<main><style>
+	body {
+		background-color: var(--background-color);
+	}
+
+	h1 {
+		margin-bottom: 8px;
+		margin-top: 32px;
+	}
+
+	:not(pre)>code {
+		background: var(--code-background-color);
+		padding: 1px 4px;
+		font-size: 0.95em;
+		border-radius: 3px;
+	}
+
+	pre {
+		background: var(--codeblock-background-color);
+		color: var(--codeblock-color);
+	}
+
+	pre code {
+		display: block;
+		overflow-x: auto;
+		padding: .5em;
+	}
+
+	.date-big {
+		line-height: 2;
+		margin-left: 32px;
+	}
+
+	article {
+		background-color: var(--base-color);
+		box-shadow: 0px 3px 2px 0px rgba(0, 0, 0, 0.15);
+	}
+
+	figure {
+		margin: 0;
+	}
+
+	figure img {
+		margin: 0;
+	}
+
+	article img,
+	article video {
+		max-width: 100%;
+		height: auto;
+		display: block;
+		margin: auto;
+		margin-top: 16px;
+		margin-bottom: 16px;
+	}
+
+	article h1 {
+		margin-top: 64px;
+	}
+
+	article h2,
+	article h3,
+	article h4 {
+		margin-top: 42px;
+	}
+
+	.article-info {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+	}
+
+	.article-metadata {
+		display: flex;
+		gap: 24px;
+		align-items: center;
+		font-family: var(--header-font-family);
+		margin-bottom: 12px;
+	}
+
+	@media (max-width: 900px) {
+		.article-metadata {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 16px;
+		}
+	}
+
+	.article-author {
+		color: var(--base-color-text-subtitle-date);
+		font-weight: 700;
+		font-size: 18px;
+		flex-grow: 1;
+		display: flex;
+		gap: 12px;
+		align-items: center;
+	}
+
+	.article-author .avatar {
+		border-radius: 100%;
+		margin: 0;
+	}
+
+	.article-author .by {
+		color: var(--base-color-text-subtitle);
+	}
+	
+	.article-metadata .date {
+		color: var(--base-color-text-subtitle-date);
+	}
+
+	.tag.active {
+		filter: saturate(0.75);
+	}
+
+	@media screen and (min-width: 900px) {
+		article .content {
+			width: 70%;
+			margin: auto;
+		}
+	}
+
+	@media (max-width: 900px) {
+		body {
+			background-color: var(--base-color);
+		}
+
+		article {
+			background-color: transparent;
+			box-shadow: none;
+		}
+
+		article img:first-child,
+		article video:first-child {
+			max-width: 100%;
+		}
+	}
+</style><link rel="stylesheet" href="/assets/css/highlight.obsidian.min.css"/>
+		<div class="container">
+			<article class="padded">
+				<div class="content article-container">
+					<figure class="article-cover"><img src="/storage/app/uploads/public/5a6/f92/d3f/5a6f92d3f0d1d382442473.jpg" title="" alt="" class="rounded-lg" style="width: 100%; height: auto"/></figure>
+					<div class="article-info">
+						<h1>  </h1>
+						<div class="article-metadata">
+							<div class="article-author"></div> <span class="date"></span></div>
+						<div class="tags"><a href="/blog/release"><div class="tag active"></div>
+						</a>
+					</div>
+				</div>
+				<div class="article-body">
+					<p></p>
+					<p></p>
+					<h1 id="the-long-road-to-30"></h1>
+					<p></p>
+					<p></p>
+					<p></p>
+					<p></p>
+					<p></p>
+					<p></p>
+					<h2 id="patreon"></h2>
+					<p></p>
+					<p></p>
+					<p><img src="/storage/app/media/3.0%20release/godot_contributions_december.png" alt=""/></p>
+					<p></p>
+					<p></p>
+					<p></p>
+					<p></p>
+					<p></p>
+					<h2 id="documentation">Dokumentasi</h2>
+					<p></p>
+					<p><img src="/storage/app/media/3.0%20release/godot_docs.png" alt=""/></p>
+					<p></p>
+					<p><a id="features"></a></p>
+					<h1 id="new-features-of-godot-30"></h1>
+					<p></p>
+					<p></p><ul><li><a href="#pbr"></a><ul><li><a href="#pbr-bsdf"></a></li>
+						<li><a href="#pbr-gi"></a></li>
+						<li><a href="#pbr-postprocessing"></a></li>
+						<li><a href="#pbr-shaders"></a></li>
+						<li><a href="#pbr-particles"></a></li>
+					</ul>
+				</li>
+				<li><a href="#assets"></a><ul><li><a href="#assets-gltf2"></a></li>
+					<li><a href="#assets-obj"></a></li>
+					<li><a href="#assets-svg"></a></li>
+				</ul>
+			</li>
+			<li><a href="#gdnative"></a></li>
+			<li><a href="#csharp"></a></li>
+			<li><a href="#visualscript"></a></li>
+			<li><a href="#gdscript"></a></li>
+			<li><a href="#audio"></a></li>
+			<li><a href="#vr"></a></li>
+			<li><a href="#bullet"></a></li>
+			<li><a href="#multiplayer"></a></li>
+			<li><a href="#export"></a></li>
+			<li><a href="#ipv6"></a></li>
+			<li><a href="#wasm"></a></li>
+			<li><a href="#theme"></a></li>
+			<li><a href="#autotiling"></a></li>
+			<li><a href="#stylebox"></a></li>
+			<li><a href="#oversampling"></a></li>
+			<li><a href="#cursor"></a></li>
+			<li><a href="#3d-viewport"></a></li>
+			<li><a href="#consoles"></a></li>
+			<li><a href="#changelog"></a></li>
+		</ul>
+		<p><a id="pbr"></a></p>
+		<h2 id="new-physically-based-3d-renderer"></h2>
+		<p><img src="/storage/app/media/3.0%20release/new_3d_renderer.jpg" alt=""/></p>
+		<p></p>
+		<p><em></em></p>
+		<p></p>
+		<p></p>
+		<p><a id="pbr-bsdf"></a></p>
+		<h4 id="full-principled-bsdf"></h4>
+		<p></p>
+		<p></p>
+		<p><img src="/storage/app/media/3.0%20release/new_material_params.png" alt=""/></p>
+		<p></p>
+		<p><a id="pbr-gi"></a></p>
+		<h4 id="global-illumination-gi"></h4>
+		<p></p>
+		<p><img src="/storage/app/media/devlog/rendering/final_quality.jpg" alt=""/></p>
+		<p></p>
+		<p></p>
+		<p><img src="/storage/app/media/3.0%20release/giprobe.png" alt=""/></p>
+		<p></p>
+		<p></p>
+		<p></p>
+		<p><img src="/storage/app/media/3.0%20release/lightmapping.png" alt=""/></p>
+		<p><a id="pbr-postprocessing"></a></p>
+		<h4 id="mid--and-post-processing"></h4>
+		<p></p>
+		<p></p>
+		<p><img src="/storage/app/media/3.0%20release/auto_exposure.gif" alt=""/></p>
+		<p></p>
+		<p><img src="/storage/app/media/devlog/rendering/dof1.jpg" alt=""/></p>
+		<p></p>
+		<p><img src="/storage/app/media/3.0%20release/environment_ssao2.png" alt=""/></p>
+		<p><a id="pbr-shaders"></a></p>
+		<h4 id="materials-and-shaders"></h4>
+		<p></p>
+		<p><img src="/storage/app/media/devlog/rendering/render_shader.png" alt=""/></p>
+		<p></p>
+		<p></p>
+		<p><a id="pbr-particles"></a></p>
+		<h4 id="gpu-particles"></h4>
+		<p></p>
+		<p><img src="/storage/app/media/3.0%20release/particles.png" alt=""/></p>
+		<p></p>
+		<p><img src="/storage/app/media/3.0%20release/particles2.png" alt=""/></p>
+		<p><a id="assets"></a></p>
+		<h2 id="new-asset-workflow"></h2>
+		<p></p>
+		<p><img src="/storage/app/media/3.0%20release/import_system.png" alt=""/></p>
+		<p></p>
+		<p></p>
+		<p></p>
+		<p><a id="assets-gltf2"></a></p>
+		<h4 id="gltf-20-support"></h4>
+		<p></p>
+		<p><img src="/storage/app/media/3.0%20release/gltf.png" alt=""/></p>
+		<p></p>
+		<p><a id="assets-obj"></a></p>
+		<h4 id="improved-obj-support"></h4>
+		<p></p>
+		<p><a id="assets-svg"></a></p>
+		<h4 id="svg-support"></h4>
+		<p></p>
+		<p></p>
+		<p><a id="gdnative"></a></p>
+		<h2 id="gdnative"></h2>
+		<p><img src="/storage/app/media/3.0%20release/gdnative.png" alt=""/></p>
+		<p></p>
+		<p></p>
+		<p></p>
+		<p></p>
+		<p><a id="csharp"></a></p>
+		<h2 id="mono--c-support"></h2>
+		<p><img src="/storage/app/media/3.0%20release/monogodot.png" alt=""/></p>
+		<p></p>
+		<p></p>
+		<p></p>
+		<p></p>
+		<p></p>
+		<p><a id="visualscript"></a></p>
+		<h2 id="visual-scripting"></h2>
+		<p></p>
+		<p><img src="/storage/app/media/3.0%20release/visual_script.png" alt=""/></p>
+		<p></p>
+		<p></p>
+		<p><a id="gdscript"></a></p>
+		<h2 id="gdscript"></h2>
+		<p></p>
+		<p></p>
+		<p><img src="/storage/app/media/3.0%20release/gdscript3.png" alt=""/></p>
+		<p></p>
+		<p></p>
+		<p></p>
+		<p><a id="audio"></a></p>
+		<h2 id="new-audio-engine"></h2>
+		<p></p>
+		<p></p>
+		<p><img src="/storage/app/media/3.0%20release/audiorack.png" alt=""/></p>
+		<p></p>
+		<p><img src="/storage/app/media/3.0%20release/builtinfx.png" alt=""/></p>
+		<p></p>
+		<p></p><iframe width="560" height="315" src="https://www.youtube.com/embed/aRwCxMYSIk8" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen=""></iframe><p><a id="vr"></a></p>
+		<h2 id="vr-support"></h2>
+		<p></p><ul><li></li>
+		<li></li>
+	</ul>
+	<p><img src="/storage/app/media/3.0%20release/Sponza%20VR.png" alt=""/></p>
+	<p></p>
+	<p><a id="bullet"></a></p>
+	<h2 id="bullet-physics-backend"></h2>
+	<p></p>
+	<p><img src="/storage/app/media/3.0%20release/bullet.png" alt=""/></p>
+	<p></p>
+	<p><a id="multiplayer"></a></p>
+	<h2 id="new-networked-multiplayer-api"></h2>
+	<p></p>
+	<p><img src="/storage/app/media/3.0%20release/multiplayer.png" alt=""/></p>
+	<p></p>
+	<p><img src="/storage/app/media/3.0%20release/multiplayer2.png" alt=""/></p>
+	<p><a id="export"></a></p>
+	<h2 id="rewritten-export-system"></h2>
+	<p></p>
+	<p><img src="/storage/app/media/3.0%20release/export_presets.png" alt=""/></p>
+	<p></p>
+	<p><img src="/storage/app/media/3.0%20release/ft.png" alt=""/></p>
+	<p></p>
+	<p><img src="/storage/app/media/3.0%20release/ft2.png" alt=""/></p>
+	<p><a id="ipv6"></a></p>
+	<h2 id="ipv6-support"></h2>
+	<p><img src="/storage/app/media/3.0%20release/ipv6.png" alt=""/></p>
+	<p></p>
+	<p><a id="wasm"></a></p>
+	<h2 id="webassembly-and-webgl-20-support"></h2>
+	<p><img src="/storage/app/media/3.0%20release/webassembly.png" alt=""/></p>
+	<p></p>
+	<p><a id="theme"></a></p>
+	<h2 id="new-editor-theme-and-customization"></h2>
+	<p></p>
+	<p><img src="/storage/app/media/3.0%20release/editor_theme.png" alt=""/></p>
+	<p></p>
+	<p><a id="autotiling"></a></p>
+	<h2 id="auto-tiling-in-tile-maps"></h2>
+	<p></p><video width="720" height="434" controls="">
+  <source src="/storage/app/media/3.0%20release/autotile-damarind.mp4" type="video/mp4">
+</video><p><a id="stylebox"></a></p>
+	<h2 id="improved-flat-style-box"></h2>
+	<p></p>
+	<p><img src="/storage/app/media/3.0%20release/flatstylebox.png" alt=""/></p>
+	<p><a id="oversampling"></a></p>
+	<h2 id="font-oversampling"></h2>
+	<p></p>
+	<p><img src="/storage/app/media/3.0%20release/font_oversample.png" alt=""/></p>
+	<p><a id="cursor"></a></p>
+	<h2 id="custom-hardware-cursor"></h2>
+	<p><img src="/storage/app/media/3.0%20release/cursor.png" alt=""/></p>
+	<p></p>
+	<p><a id="3d-viewport"></a></p>
+	<h2 id="greatly-improved-3d-editor-viewport"></h2>
+	<p><img src="/storage/app/media/3.0%20release/3dgizmo.png" alt=""/></p><ul><li></li>
+	<li></li>
+	<li></li>
+	<li></li>
+	<li></li>
+	<li></li>
+	<li></li></ul><p><a id="consoles"></a></p><h2 id="console-support"></h2><p></p><p></p><p><img src="/storage/app/media/3.0%20release/godotswitch.png" alt=""/></p><p></p><p><a id="changelog"></a></p><h2 id="and-hundreds-of-other-improvements"></h2><p></p><p></p><h1 id="future"></h1><p></p><p></p><h1 id="help-make-godot-better"></h1><p></p><p></p><p></p><p></p><p><em></em></p></div></div></article></div><link rel="stylesheet" href="/assets/css/anchor-link.css"/><script src="/assets/js/anchor-link.js"></script><script>
+	document.addEventListener('DOMContentLoaded', () => {
+		// Add icons to easily copy section links.
+		window.applyAnchorLinks('.article-body');
+
+		// Add lightbox elements in blog articles for Tobii.
+		document.querySelectorAll('.article-cover img, .article-body img').forEach((articleImg) => {
+			const lightbox = document.createElement('a');
+			lightbox.href = articleImg.src;
+			lightbox.classList.add('lightbox');
+			lightbox.dataset.group = 'article';
+			articleImg.parentNode.appendChild(lightbox);
+			lightbox.appendChild(articleImg);
+		});
+	});
+</script></main><footer><div class="container flex footer-container"><div id="copyright"><p> © 2007-2023 Juan Linietsky, Ariel Manzur dan para <a href="https://github.com/godotengine/godot/blob/master/AUTHORS.md" target="_blank" rel="noopener">kontributor</a><br/>
+				Godot adalah anggota dari <a href="https://sfconservancy.org/" target_="_blank" rel="noopener">Software Freedom
+					Conservancy</a>.<br/>
+				Dikelola oleh <a href="https://tuxfamily.org" target="_blank" rel="noopener">TuxFamily.org</a>.<br/><a href="https://github.com/godotengine/godot-website" target="_blank" rel="noopener">Kode sumber situs web di
+					GitHub</a>. </p></div><div id="sitemap"><ul class="sitemap-group"><li><strong>Dapatkan Godot</strong></li><li><a href="/download/windows" class="set-os-download-url">Unduh</a></li><li><a href="https://editor.godotengine.org/releases/latest/">Editor Web</a></li><li>&nbsp;</li><li><strong>Hubungan Masyarakat</strong></li><li><a href="/blog">Blog</a></li><li><a href="/community">Komunitas dan Acara</a></li><li><a href="/press">Kit Pers</a></li></ul><ul class="sitemap-group"><li><strong>Tentang Godot</strong></li><li><a href="/features">Fitur</a></li><li><a href="/showcase">Pajangan</a></li><li><a href="/education">Pendidikan</a></li><li><a href="/license">Lisensi</a></li><li><a href="/code-of-conduct">Kode Etik</a></li><li><a href="/privacy-policy">Kebijakan Privasi</a></li><li><a href="/donate">Donasi</a></li></ul><ul class="sitemap-group"><li><strong>Tim Proyek</strong></li><li><a href="/governance">Tata Kelola</a></li><li><a href="/teams">Tim</a></li><li>&nbsp;</li><li><strong>Sumber Daya Tambahan</strong></li><li><a href="/asset-library/asset">Perpustakaan Aset</a></li><li><a href="https://docs.godotengine.org">Dokumentasi</a></li><li><a href="https://github.com/godotengine">Repositori Kode</a></li></ul></div><div id="social" class="dark-desaturate"><h4 class="text-right"><a href="/contact">Hubungi kami</a></h4><div class="flex justify-space-between"><a href="https://github.com/godotengine" target="_blank" rel="noopener"><img src="/assets/footer/github_logo.svg" width="32" height="32" alt="GitHub"/></a><a href="https://twitter.com/godotengine" target="_blank" rel="noopener"><img src="/assets/footer/twitter_logo.svg" width="32" height="32" alt="Twitter"/></a><a href="https://www.facebook.com/groups/godotengine/" target="_blank" rel="noopener"><img src="/assets/footer/facebook_logo.svg" width="32" height="32" alt="Facebook"/></a><a href="https://www.reddit.com/r/godot" target="_blank" rel="noopener"><!-- Zero-width space in the `alt` text to prevent content blockers from blocking the icon --><img src="/assets/footer/reddit_logo.svg" width="32" height="32" alt="Reddit"/></a><a href="/rss.xml" target="_blank" rel="noopener"><!-- Icon is called `feed` instead of `rss` to prevent content blockers from blocking the icon --><img src="/assets/footer/feed_logo.svg" width="32" height="32" alt="Umpan RSS"/></a></div></div></div></footer><script defer src="/assets/js/tobii.min.js"></script><script defer src="/assets/js/highlight.min.js?1"></script><script defer src="/assets/js/highlight.gdscript.min.js?1"></script><script>
+	document.addEventListener('DOMContentLoaded', () => {
+		// This needs to be done on page load but also after page changes,
+		// in case a code block appears in an article.
+		document.querySelectorAll('pre code').forEach((block) => {
+			hljs.highlightBlock(block);
+		});
+
+		// Initialize lightbox.
+		new Tobii({
+			zoom: false,
+		});
+
+		// Update any download link to point to identified user's OS.
+		const links = document.querySelectorAll('.set-os-download-url');
+		for (let i = 0; i < links.length; i++) {
+			const link = links[i];
+			let link_slug = 'download';
+			if ('version' in link.dataset && link.dataset['version'] === '3') {
+				link_slug = 'download/3.x';
+			}
+
+			let link_platform = 'windows';
+			if (navigator.platform.indexOf('Mac') !== -1) {
+				link_platform = 'macos';
+			} else if (navigator.platform.indexOf('Linux') !== -1) {
+				link_platform = 'linux';
+			}
+
+			link.href = `/${link_slug}/${link_platform}`;
+		}
+	});
+</script></body></html>
